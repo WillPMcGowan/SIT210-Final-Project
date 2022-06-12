@@ -7,19 +7,24 @@ import paho.mqtt.client as mqtt
 import paho.mqtt.publish as publish
 import time
 
-# hardware setup
-buzzer = Buzzer(18)
-
 """
 This section cotains object detection setup
 """
-subject = "dog" # Change this to the animal you wish to detect. Check the coco.names file to see if the animal is on there
+subject = "wolf" # Change this to the animal you wish to detect. Check the coco.names file to see if the animal is on there
 accuracy_thresh = 80
 
 classNames = []
 classFile = "/home/pi/Pest_Detection_Alert/Pest_Detection_Files/coco.names"
+
 with open(classFile,"rt") as f:
     classNames = f.read().rstrip("\n").split("\n")
+    try:
+        if subject not in classNames:
+            raise ValueError("This animal can not be detected. Try Checking spelling")
+    except ValueError as e:
+        print(e)
+        print("Exiting")
+        quit()
 
 configPath = "/home/pi/Pest_Detection_Alert/Pest_Detection_Files/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
 weightsPath = "/home/pi/Pest_Detection_Alert/Pest_Detection_Files/frozen_inference_graph.pb"
@@ -45,7 +50,10 @@ def detect_object(img, thres, nms, objects=[]):
                 
     return img, accuracy, class_name 
 
-# Simulates alarm
+# hardware setup
+buzzer = Buzzer(18)
+
+# Simulate alarm
 def alarm_function():
     for i in range(10):
         buzzer.on()
@@ -75,12 +83,9 @@ def on_message(client, userdata, msg):
     print("Topic:" + msg.topic+ " "+str(msg.payload))
     return str(msg.payload)
 
-
 """
 This section is the main function/loop
-"""
-
-    
+""" 
 
 try:
  
@@ -136,4 +141,6 @@ finally:
     GPIO.cleanup()
     client.loop_stop()
     print("Exiting")
+    
+
     
