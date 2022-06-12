@@ -10,7 +10,7 @@ import time
 """
 This section cotains object detection setup
 """
-subject = "wolf" # Change this to the animal you wish to detect. Check the coco.names file to see if the animal is on there
+subject = "dog" # Change this to the animal you wish to detect. Check the coco.names file to see if the animal is on there
 accuracy_thresh = 80
 
 classNames = []
